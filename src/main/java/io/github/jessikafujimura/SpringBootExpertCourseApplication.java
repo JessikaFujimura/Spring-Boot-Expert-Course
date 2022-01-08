@@ -31,17 +31,20 @@ public class SpringBootExpertCourseApplication {
             }
             );
 
-            clientes.buscarPorNome("mi").forEach(System.out::println);
+            todos = clientes.obterTodosCliente();
+            clientes.buscarPorNome("ka").forEach(System.out::println);
 
+            todos.forEach(i -> {
+                clientes.deletar(i);
+            });
+
+            todos = clientes.obterTodosCliente();
             if(todos.isEmpty()){
                 System.out.println("Nenhum cliente encontrado");
             } else {
-                todos.forEach(i -> {
-                    clientes.deletar(i);
-                });
+                todos.forEach(System.out::println);
             }
 
-            todos.forEach(System.out::println);
         };
     }
 
