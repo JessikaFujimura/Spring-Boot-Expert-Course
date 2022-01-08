@@ -1,0 +1,7 @@
+io\github\jessikafujimura\domain\entity\Cliente.class
+io\github\jessikafujimura\domain\entity\ItemPedido.class
+io\github\jessikafujimura\domain\entity\Produto.class
+io\github\jessikafujimura\domain\repository\Clientes$1.class
+io\github\jessikafujimura\SpringBootExpertCourseApplication.class
+io\github\jessikafujimura\domain\repository\Clientes.class
+io\github\jessikafujimura\domain\entity\Pedido.class
