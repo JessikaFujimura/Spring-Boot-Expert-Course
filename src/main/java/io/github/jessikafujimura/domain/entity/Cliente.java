@@ -1,5 +1,7 @@
 package io.github.jessikafujimura.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -15,7 +17,11 @@ public class Cliente {
     @Column(name ="nome", length = 100 )
     private String nome;
 
+    @Column(name = "cpf", length = 11)
+    private String cpf;
+
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Pedido> pedidos;
 
     public Cliente() {
@@ -54,11 +60,20 @@ public class Cliente {
         this.pedidos = pedidos;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
     @Override
     public String toString() {
         return "Cliente{" +
                 "id=" + id +
                 ", nome='" + nome + '\'' +
+                ", cpf='" + cpf + '\'' +
                 '}';
     }
 }
