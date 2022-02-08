@@ -6,10 +6,12 @@ import io.github.jessikafujimura.domain.entity.Cliente;
 import io.github.jessikafujimura.domain.entity.ItemPedido;
 import io.github.jessikafujimura.domain.entity.Pedido;
 import io.github.jessikafujimura.domain.entity.Produto;
+import io.github.jessikafujimura.domain.enums.StatusPedido;
 import io.github.jessikafujimura.domain.repository.Clientes;
 import io.github.jessikafujimura.domain.repository.ItensPedido;
 import io.github.jessikafujimura.domain.repository.Pedidos;
 import io.github.jessikafujimura.domain.repository.Produtos;
+import io.github.jessikafujimura.exception.PedidoNaoEncontradoException;
 import io.github.jessikafujimura.exception.RegraNegocioException;
 import io.github.jessikafujimura.service.PedidoService;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +38,12 @@ public class PedidoServiceImpl implements PedidoService {
         Pedido pedido = new Pedido();
         pedido.setTotal(pedidoDTO.getTotal());
         pedido.setDataPedido(LocalDate.now());
+        pedido.setStatusPedido(StatusPedido.REALIZADO);
 
         Integer idCliente = pedidoDTO.getCliente();
         Cliente cliente = clientes.findById(idCliente).orElseThrow(() -> new RegraNegocioException("Código de cliente inválido"));
         pedido.setCliente(cliente);
+
 
         List<ItemPedido> itemPedidos = converterItens(pedido, pedidoDTO.getItens());
         pedidos.save(pedido);
@@ -52,6 +56,17 @@ public class PedidoServiceImpl implements PedidoService {
     public Optional<Pedido> obterPedidoDetalhado(Integer id) {
        return pedidos.findByIdFetchItems(id);
 
+    }
+
+    @Override
+    @Transactional
+    public void atualizarStatus(Integer id, StatusPedido status) {
+            pedidos.findById(id)
+            .map( pedido -> {
+                pedido.setStatusPedido(status);
+                return pedidos.save(pedido);
+            })
+            .orElseThrow(() -> new PedidoNaoEncontradoException());
     }
 
     private List<ItemPedido> converterItens(Pedido pedido, List<ItemPedidoDTO> itens){
@@ -69,4 +84,6 @@ public class PedidoServiceImpl implements PedidoService {
             return itemPedido;
         }).collect(Collectors.toList());
     }
+
+
 }

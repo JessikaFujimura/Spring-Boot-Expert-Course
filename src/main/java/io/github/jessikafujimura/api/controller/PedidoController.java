@@ -3,8 +3,10 @@ package io.github.jessikafujimura.api.controller;
 import io.github.jessikafujimura.api.dto.ItemPedidoDTOResponse;
 import io.github.jessikafujimura.api.dto.PedidoDTO;
 import io.github.jessikafujimura.api.dto.PedidoDTOResponse;
+import io.github.jessikafujimura.api.dto.StatusPedidoDto;
 import io.github.jessikafujimura.domain.entity.ItemPedido;
 import io.github.jessikafujimura.domain.entity.Pedido;
+import io.github.jessikafujimura.domain.enums.StatusPedido;
 import io.github.jessikafujimura.service.PedidoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
@@ -43,6 +45,15 @@ public class PedidoController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado"));
     }
 
+    @PatchMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatus(@PathVariable Integer id, @RequestBody StatusPedidoDto statusPedidoDto){
+
+        String status = statusPedidoDto.getStatus();
+        pedidoService.atualizarStatus(id, StatusPedido.valueOf(status));
+
+    }
+
     private PedidoDTOResponse convertToPedidoDTOResponse(Pedido pedido){
        return PedidoDTOResponse
                 .builder()
@@ -51,6 +62,7 @@ public class PedidoController {
                 .nomeCliente(pedido.getCliente().getNome())
                 .dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .total(pedido.getTotal())
+                .status(pedido.getStatusPedido().name())
                 .itens(convertItemPedidoDTOResponse(pedido.getItems()))
                 .build();
     }
